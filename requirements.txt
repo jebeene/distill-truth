@@ -1,0 +1,8 @@
+# requirements.txt
+torch
+transformers
+datasets
+scikit-learn
+evaluate
+bert_score
+argparse
