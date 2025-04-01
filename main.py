@@ -1,25 +1,28 @@
-# main.py
 import argparse
 from data import load_liar_dataset
-from loader import load_model
-from evaluate import evaluate
-from evaluate import generate_explanations, compare_explanations
+from loader import load_generation_model
+from evaluate import evaluate_generation
 from config import DEFAULT_MODEL_NAME
-import torch
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=str, default=DEFAULT_MODEL_NAME, help="Model name or path")
+    parser.add_argument("--model", type=str, default=DEFAULT_MODEL_NAME)
+    parser.add_argument("--max-samples", type=int, default=100)
+    parser.add_argument("--cache-path", type=str, default="generation_results.jsonl")
     args = parser.parse_args()
 
+    # Load dataset and model
     dataset = load_liar_dataset()
-    tokenizer, model, device = load_model(args.model)
+    tokenizer, model, device = load_generation_model(args.model)
 
-    print("Evaluating classification...")
-    results = evaluate(model, tokenizer, dataset["test"], device)
-    print("Classification Results:", results)
+    # Run evaluation
+    results = evaluate_generation(
+        model,
+        tokenizer,
+        dataset["test"],
+        device,
+        max_samples=args.max_samples,
+        cache_path=args.cache_path
+    )
 
-    print("Evaluating explanations...")
-    generated = generate_explanations(args.model, dataset["test"][:100])
-    bertscore = compare_explanations(generated, dataset["test"]["justification"][:100])
-    print("Explainability Results:", bertscore)
+    print("Final Evaluation:", results)

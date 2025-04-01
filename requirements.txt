@@ -3,6 +3,4 @@ torch
 transformers
 datasets
 scikit-learn
-evaluate
-bert_score
-argparse
+tqdm
