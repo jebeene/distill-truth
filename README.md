@@ -10,6 +10,24 @@ This project evaluates the effectiveness of open-source **distilled language mod
 - **Evaluation**: Prompt-based text generation with label extraction and metric computation
 ---
 
+## Project Setup
+
+1. Create an [OpenRouter API key](https://openrouter.ai/settings/keys)
+2. Create `.env` in project root with as `OPENROUTER_API_KEY=your_actual_api_key`
+
+**You can either setup the environment using pip / conda OR Docker.**
+
+### pip / conda
+1. Install `pip`
+2. Run `pip install -r requirements.txt`
+3. Run `make` to see available commands
+
+### Docker
+1. Download Docker
+2. Run `make build` to build the Docker Image
+3. Run `make run` to launch a `bash` shell in the Docker container
+4. Run `make` to see available commands
+
 ## Directory Structure
 
 - **configs/**: Configuration files for API keys, base URLs, and model mappings.
@@ -34,9 +52,3 @@ This project evaluates the effectiveness of open-source **distilled language mod
 | 5  | pants-fire    |
 
 ---
-
-## Project Setup
-1. Install `pip` and run `pip install -r requirements.txt`
-2. Create an [OpenRouter API key](https://openrouter.ai/settings/keys) and run `export OPENROUTER_API_KEY=your_actual_api_key`
-3. Query the default model (defined in `/configs/openrouter_config.yaml)` using `python main.py "Your prompt here"`
-4. 
