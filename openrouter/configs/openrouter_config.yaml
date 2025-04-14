@@ -1,0 +1,5 @@
+api_key: "env:OPENROUTER_API_KEY"
+base_url: "https://openrouter.ai/api/v1"
+available_models:
+  DEEPSEEK_R1_14B: "deepseek/deepseek-r1-distill-qwen-14b:free"
+  DEEPSEEK_R1_32B: "deepseek/deepseek-r1-distill-qwen-32b:free"

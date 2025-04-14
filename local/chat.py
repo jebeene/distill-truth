@@ -1,7 +1,5 @@
 import argparse
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
-from loader import load_generation_model
+from local.loader import load_generation_model
 from config import DEFAULT_MODEL_NAME
 
 def chat(model_name):
