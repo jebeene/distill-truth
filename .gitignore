@@ -4,3 +4,4 @@ __pycache__
 *.jsonl
 .idea
 evaluation_results
+venv
