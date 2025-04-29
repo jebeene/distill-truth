@@ -1,14 +1,24 @@
+CLASSIFICATION_OPTIONS = """0. false
+1. half-true
+2. mostly-true
+3. true
+4. barely-true
+5. pants-fire"""
+
 # Classification Prompts
-CLASSIFICATION_SYSTEM_PROMPT = """You are a fact-checking assistant trained to verify political and non-political claims. You carefully analyze a given statement and determine whether it is {CLASSIFICATION_OPTIONS} based on reasoning and evidence. Your responses are concise, well-justified, and avoid speculation."""
+CLASSIFICATION_SYSTEM_PROMPT = """You are a fact-checking assistant trained to verify political and non-political claims. You carefully analyze a given statement and determine whether it is any of the following options based on reasoning and evidence:
+{CLASSIFICATION_OPTIONS}
+Your responses are concise, well-justified, and avoid speculation."""
 
 IS_INCLUDE_SPEAKER = "The following speaker made the above statement: {SPEAKER}."
 IS_INCLUDE_PARTY = "Additionally, the above speaker belongs to the party: {PARTY_AFFILIATION}"
+IS_INCLUDE_EXPLANATION = "Provide an explanation and "
 STATEMENT_CLASSIFICATION_PROMPT = """Evaluate the truthfulness of the following statement:
 "{STATEMENT}"
 
 {IS_INCLUDE_SPEAKER} {IS_INCLUDE_PARTY}
 
-What is your judgment? Classify the claim as one of the following: {CLASSIFICATION_OPTIONS}."""
+What is your judgment? {IS_INCLUDE_EXPLANATION}Classify the claim as one of the following: {CLASSIFICATION_OPTIONS}."""
 
 JUSTIFICATION_PROMPT = """Now that you have classified the statement. Provide an explation to the user as to why you think the statement is {CLASSIFIED_LABEL} and what parts of the statement makes you believe so."""
 
