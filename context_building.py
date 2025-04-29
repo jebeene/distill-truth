@@ -1,8 +1,29 @@
 import pandas as pd
 from PROMPTS import *
+from sentence_transformers import SentenceTransformer, util
 
-def get_similar_statements(statement:str, num_of_sim_statement:int = 3) -> list[str]:
-    ...
+def get_similar_statements(statement:str, top_k:int = 3) -> list[str]:
+    # Load LIAR TSV dataset
+    df_train = pd.read_csv("./datasets/train.tsv", sep="\t", header=None)
+    # Use only necessary columns
+    df_train = df_train[["statement", "label"]].dropna()
+    # Load sentence transformer model
+    model = SentenceTransformer("all-MiniLM-L6-v2")
+    corpus_embeddings = model.encode(df_train['statement'].tolist(), convert_to_tensor=True)
+    query_embedding = model.encode(statement, convert_to_tensor=True)
+    hits = util.semantic_search(query_embedding, corpus_embeddings, top_k=top_k)
+    top_k_indices = [hit['corpus_id'] for hit in hits[0]]
+    top_examples = df_train.iloc[top_k_indices]
+
+    # Format as chat messages
+    return [
+        {
+            "role": "user",
+            "content": FEW_SHOT_PROMPT_TEMPLATE.format(STATEMENT=row["statement"], LABEL=row["label"])
+        }
+        for _, row in top_examples.iterrows()
+    ]
+    
 
 def get_classification_context_chain(
     row:pd.Series,

@@ -10,6 +10,9 @@ CLASSIFICATION_SYSTEM_PROMPT = """You are a fact-checking assistant trained to v
 {CLASSIFICATION_OPTIONS}
 Your responses are concise, well-justified, and avoid speculation."""
 
+#Few Shot Prompts
+FEW_SHOT_PROMPT_TEMPLATE = 'Statement: "{STATEMENT}"\nLabel: {LABEL}'
+
 IS_INCLUDE_SPEAKER = "The following speaker made the above statement: {SPEAKER}."
 IS_INCLUDE_PARTY = "Additionally, the above speaker belongs to the party: {PARTY_AFFILIATION}"
 IS_INCLUDE_EXPLANATION = "Provide an explanation and "
