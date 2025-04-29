@@ -63,7 +63,7 @@ trainer = Trainer(
     compute_metrics=compute_metrics,
     args=TrainingArguments(
         output_dir="./results",
-        per_device_eval_batch_size=8,
+        per_device_eval_batch_size=1,
         disable_tqdm=False,
         logging_dir="./logs",
         logging_steps=10,
@@ -71,4 +71,20 @@ trainer = Trainer(
 )
 
 results = trainer.evaluate(eval_dataset=dataset)
+# Get raw predictions
+predictions = trainer.predict(dataset)
+logits = predictions.predictions
+predicted_labels = torch.argmax(torch.tensor(logits), dim=-1).numpy()
+
+# Save to CSV
+output_df = pd.DataFrame({
+    "id": df.index,
+    "statement": df[STATEMENT_COLUMN],
+    "context": df[CONTEXT_COLUMN],
+    "true_label": df[LABEL_COLUMN],
+    "predicted_label": predicted_labels,
+})
+
+output_df.to_csv("model_outputs.csv", index=False)
+print("Saved predictions to model_outputs.csv")
 print(results)
