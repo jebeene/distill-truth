@@ -2,9 +2,15 @@ import pandas as pd
 from PROMPTS import *
 from sentence_transformers import SentenceTransformer, util
 
-def get_similar_statements(statement:str, top_k:int = 3) -> list[str]:
+def get_similar_statements(
+    statement:str,
+    top_k:int=3,
+    is_include_speaker:bool=False,
+    is_include_party:bool=False,
+    is_include_explanation:bool=False,
+) -> list[str]:
     # Load LIAR TSV dataset
-    df_train = pd.read_csv("./datasets/train.tsv", sep="\t", header=None)
+    df_train = pd.read_csv("./datasets/train.tsv", sep="\t")
     # Use only necessary columns
     df_train = df_train[["statement", "label"]].dropna()
     # Load sentence transformer model
@@ -19,7 +25,13 @@ def get_similar_statements(statement:str, top_k:int = 3) -> list[str]:
     return [
         {
             "role": "user",
-            "content": FEW_SHOT_PROMPT_TEMPLATE.format(STATEMENT=row["statement"], LABEL=row["label"])
+            "content": STATEMENT_CLASSIFICATION_PROMPT.format(
+                STATEMENT=row['statement'],
+                IS_INCLUDE_SPEAKER=IS_INCLUDE_SPEAKER.format(SPEAKER=row['speaker']) if is_include_speaker else '',
+                IS_INCLUDE_PARTY=IS_INCLUDE_PARTY.format(PARTY_AFFILIATION=row['party']) if is_include_party else '',
+                IS_INCLUDE_EXPLANATION=IS_INCLUDE_EXPLANATION if is_include_explanation else '',
+                CLASSIFICATION_OPTIONS=CLASSIFICATION_OPTIONS
+            )
         }
         for _, row in top_examples.iterrows()
     ]
@@ -33,9 +45,9 @@ def get_classification_context_chain(
     is_include_party:bool=False
 ) -> list[str]:
 
-    statement = row[2]
-    speaker = row[4]
-    party = row[7]
+    statement = row['statement']
+    speaker = row['speaker']
+    party = row['party']
 
     context = [
         {"role": "system", "content": CLASSIFICATION_SYSTEM_PROMPT.format(CLASSIFICATION_OPTIONS=CLASSIFICATION_OPTIONS)},
@@ -45,7 +57,10 @@ def get_classification_context_chain(
         context.extend(
             get_similar_statements(
                 statement=statement,
-                num_of_sim_statement=shot_prompting
+                top_k=shot_prompting,
+                is_include_speaker=is_include_speaker,
+                is_include_party=is_include_party,
+                is_include_explanation=is_include_explanation,
             )
         )
 
@@ -63,7 +78,7 @@ def get_classification_context_chain(
 
 def get_PE_context_chain(
     row: pd.Series
-):
+) -> list[str]:
     explanation = row['pred_explanation']
     context = [
         {"role": "system", "content": PE_SYSTEM_PROMPT.format(CLASSIFICATION_OPTIONS=CLASSIFICATION_OPTIONS)},
@@ -77,6 +92,6 @@ if __name__ == "__main__":
     df = pd.read_csv('./datasets/train.tsv', sep="\t")
     
     context = df.head(1).apply(
-        lambda row: get_classification_context_chain(row, shot_prompting=False),
+        lambda row: get_classification_context_chain(row, shot_prompting=2),
         axis=1
     )
