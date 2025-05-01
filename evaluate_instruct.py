@@ -7,6 +7,7 @@ from datasets import Dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tqdm import tqdm
 import PROMPTS
+from math import ceil
 
 # -------------------- Configuration --------------------
 
@@ -19,6 +20,7 @@ MODEL_NAME = sys.argv[1]
 TSV_PATH = sys.argv[2]
 MODE = sys.argv[3]
 
+BATCH_SIZE = 16
 USE_CUDA = torch.cuda.is_available()
 USE_MPS = torch.backends.mps.is_available()
 DEVICE = torch.device("cuda" if USE_CUDA else "mps" if USE_MPS else "cpu")
@@ -88,20 +90,24 @@ with open(outfile, "w", encoding="utf-8", newline='') as outpath:
     writer = csv.writer(outpath, delimiter=",", quoting=csv.QUOTE_ALL)
     writer.writerow(["statement", "true_label", "prompt", "model_output"])
 
-    for _, row in tqdm(df.iterrows(), total=len(df), desc=f"Evaluating {basename} ({MODE})"):
-        prompt = build_prompt(row, few_shot_text)
+    num_batches = ceil(len(df) / BATCH_SIZE)
+    for i in tqdm(range(num_batches), desc=f"Evaluating {basename} ({MODE})"):
+        batch_df = df.iloc[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]
+        prompts = [build_prompt(row, few_shot_text) for _, row in batch_df.iterrows()]
 
-        inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=1024).to(DEVICE)
+        inputs = tokenizer(prompts, return_tensors="pt", padding=True, truncation=True, max_length=1024).to(DEVICE)
+
         with torch.no_grad():
             outputs = model.generate(**inputs, max_new_tokens=100, do_sample=False)
 
-        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        decoded_outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
-        statement = row["statement"].replace("\n", " ").strip()
-        true_label = row["labels"]
-        clean_prompt = prompt.replace("\n", " ").strip()
-        clean_response = response.replace("\n", " ").strip()
-
-        writer.writerow([statement, true_label, clean_prompt, clean_response])
+        for row, response, prompt in zip(batch_df.itertuples(), decoded_outputs, prompts):
+            writer.writerow([
+                row.statement.replace("\n", " ").strip(),
+                row.labels,
+                prompt.replace("\n", " ").strip(),
+                response.replace("\n", " ").strip()
+            ])
 
 print(f"Saved results to {outfile}")
