@@ -20,7 +20,8 @@ TSV_PATH = sys.argv[2]
 MODE = sys.argv[3]
 
 USE_CUDA = torch.cuda.is_available()
-DEVICE = torch.device("cuda" if USE_CUDA else "cpu")
+USE_MPS = torch.backends.mps.is_available()
+DEVICE = torch.device("cuda" if USE_CUDA else "mps" if USE_MPS else "cpu")
 
 # -------------------- Data Prep --------------------
 
