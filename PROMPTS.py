@@ -11,7 +11,7 @@ CLASSIFICATION_SYSTEM_PROMPT = """You are a fact-checking assistant trained to v
 Your responses are concise, well-justified, and avoid speculation."""
 
 #Few Shot Prompts
-FEW_SHOT_PROMPT_TEMPLATE = 'Statement: "{STATEMENT}"\nLabel: {LABEL}'
+FEW_SHOT_PROMPT_TEMPLATE = 'Example:\nStatement: "{STATEMENT}"\nLabel: {LABEL}'
 
 IS_INCLUDE_SPEAKER = "The following speaker made the above statement: {SPEAKER}."
 IS_INCLUDE_PARTY = "Additionally, the above speaker belongs to the party: {PARTY_AFFILIATION}"
@@ -21,7 +21,7 @@ STATEMENT_CLASSIFICATION_PROMPT = """Evaluate the truthfulness of the following 
 
 {IS_INCLUDE_SPEAKER} {IS_INCLUDE_PARTY}
 
-What is your judgment? {IS_INCLUDE_EXPLANATION}Classify the claim as one of the following: {CLASSIFICATION_OPTIONS}."""
+What is your judgment? {IS_INCLUDE_EXPLANATION}Assign a classification label from the list: {CLASSIFICATION_OPTIONS}."""
 
 JUSTIFICATION_PROMPT = """Now that you have classified the statement. Provide an explation to the user as to why you think the statement is {CLASSIFIED_LABEL} and what parts of the statement makes you believe so."""
 

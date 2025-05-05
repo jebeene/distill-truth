@@ -6,7 +6,7 @@ def main():
         user_input = sys.argv[1]
     else:
         user_input = input("Enter your prompt: ")
-    response = chat(user_input, config_path="openrouter/configs/openrouter_config.yaml")
+    response = chat(user_input, config_path="configs/openrouter_config.yaml")
     print(f"Response!: {response}")
 
 if __name__ == "__main__":
