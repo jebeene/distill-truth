@@ -1,5 +1,5 @@
 import sys
-from openrouter.pipelines.chat_pipeline import chat
+from archive.openrouter.pipelines.chat_pipeline import chat
 
 def main():
     if len(sys.argv) > 1:

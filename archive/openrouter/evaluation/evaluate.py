@@ -2,13 +2,13 @@ from datasets import load_dataset
 from sklearn.metrics import accuracy_score, f1_score, classification_report, confusion_matrix
 import re
 from tqdm import tqdm
-from openrouter.models.model_runner import run_model
-from openrouter.prompts.prompt_builder import build_user_prompt
-from openrouter.utils.pretty import print_metrics_summary, print_confusion_matrix, log_info, log_error
+from archive.openrouter.models.model_runner import run_model
+from archive.openrouter.prompts.prompt_builder import build_user_prompt
+from archive.openrouter.utils.pretty import print_metrics_summary, print_confusion_matrix, log_error
 import json
 from datetime import datetime
 from pathlib import Path
-from openrouter.utils.pretty import log_info
+from archive.openrouter.utils.pretty import log_info
 
 def evaluate_liar_dataset(config, dataset_name="liar", split="test", limit=100):
     """

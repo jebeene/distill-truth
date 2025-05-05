@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
-from openrouter.evaluation.evaluate import evaluate_liar_dataset
-from openrouter.utils.config_loader import load_config, validate_model
+from archive.openrouter.evaluation.evaluate import evaluate_liar_dataset
+from archive.openrouter.utils.config_loader import load_config, validate_model
 
 
 def main():

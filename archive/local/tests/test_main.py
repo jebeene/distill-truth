@@ -1,6 +1,6 @@
 import pytest
 from sklearn.metrics import accuracy_score, f1_score
-from local.evaluate import extract_label, compute_metrics, build_prompt
+from archive.local.evaluate import extract_label, compute_metrics, build_prompt
 
 # --------------- LABEL EXTRACTION ----------------
 @pytest.mark.parametrize("generated_text,expected_label", [

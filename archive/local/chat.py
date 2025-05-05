@@ -1,5 +1,5 @@
 import argparse
-from local.loader import load_generation_model
+from archive.local.loader import load_generation_model
 from config import DEFAULT_MODEL_NAME
 
 def chat(model_name):

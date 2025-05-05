@@ -1,4 +1,4 @@
-from openrouter.models.openrouter import query_openrouter
+from archive.openrouter.models.openrouter import query_openrouter
 
 def run_model(prompt, config):
     """

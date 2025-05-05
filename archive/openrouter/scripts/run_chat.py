@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
-from openrouter.pipelines.chat_pipeline import chat
-from openrouter.utils.config_loader import load_config, validate_model
+from archive.openrouter.pipelines.chat_pipeline import chat
+from archive.openrouter.utils.config_loader import load_config, validate_model
 
 def main():
     parser = argparse.ArgumentParser()

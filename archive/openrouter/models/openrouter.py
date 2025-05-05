@@ -2,7 +2,7 @@ import sys
 
 import requests
 
-from openrouter.utils.pretty import log_error
+from archive.openrouter.utils.pretty import log_error
 
 
 def query_openrouter(prompt, config=None):

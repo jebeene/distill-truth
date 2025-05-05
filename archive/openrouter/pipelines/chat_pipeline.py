@@ -1,5 +1,5 @@
-from openrouter.prompts.prompt_builder import build_user_prompt
-from openrouter.models.model_runner import run_model
+from archive.openrouter.prompts.prompt_builder import build_user_prompt
+from archive.openrouter.models.model_runner import run_model
 
 
 def chat(prompt_input, config):
