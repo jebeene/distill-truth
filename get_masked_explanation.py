@@ -20,6 +20,9 @@ label_to_number = {
 }
 
 def extract_masked_explanation(output, pred_label):
+    if not isinstance(pred_label, str) or pd.isna(pred_label):
+        return output
+
     output_lower = output.lower()
     label_lower = pred_label.lower()
 
