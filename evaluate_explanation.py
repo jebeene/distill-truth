@@ -6,7 +6,7 @@ import pandas as pd
 from math import ceil
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tqdm import tqdm
-from PROMPTS import PE_PROMPT_TEMPLATE, PE_SYSTEM_PROMPT
+from PROMPTS import *
 
 # -------------------- Config --------------------
 if len(sys.argv) != 3:
@@ -16,7 +16,7 @@ if len(sys.argv) != 3:
 MODEL_NAME = sys.argv[1]
 CSV_PATH = sys.argv[2]
 
-BATCH_SIZE = 16
+BATCH_SIZE = 2
 USE_CUDA = torch.cuda.is_available()
 USE_MPS = torch.backends.mps.is_available()
 DEVICE = torch.device("cuda" if USE_CUDA else "mps" if USE_MPS else "cpu")
@@ -24,6 +24,9 @@ DEVICE = torch.device("cuda" if USE_CUDA else "mps" if USE_MPS else "cpu")
 # -------------------- Load Model --------------------
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+# if tokenizer.pad_token is None:
+#     tokenizer.padding_side = "left" # TODO: Verify if this changes results.
+#     tokenizer.pad_token = tokenizer.eos_token
 model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=torch.float16 if USE_CUDA else torch.float32)
 model.to(DEVICE)
 model.eval()
@@ -38,7 +41,7 @@ if "masked_explanation" not in df.columns:
 # -------------------- Build Prompts --------------------
 
 def build_proxy_prompt(expl):
-    return f"{PE_SYSTEM_PROMPT}\n\n" + PE_PROMPT_TEMPLATE.format(EXPLANATION=expl.strip())
+    return f"{PE_SYSTEM_PROMPT.format(CLASSIFICATION_OPTIONS_PE=CLASSIFICATION_OPTIONS_PE)}\n\n" + PE_PROMPT_TEMPLATE.format(EXPLANATION=expl.strip())
 
 df["proxy_prompt"] = df["masked_explanation"].astype(str).apply(build_proxy_prompt)
 
@@ -56,16 +59,18 @@ with open(outfile, "w", encoding="utf-8", newline='') as outpath:
         batch_df = df.iloc[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]
         prompts = batch_df["proxy_prompt"].tolist()
 
+        # inputs = tokenizer(prompts, return_tensors="pt", padding=True, truncation=True, max_length=1536).to(DEVICE)
         inputs = tokenizer(prompts, return_tensors="pt", padding=True, truncation=True, max_length=1024).to(DEVICE)
 
         with torch.no_grad():
             outputs = model.generate(**inputs, max_new_tokens=50, do_sample=False)
+            # outputs = model.generate(**inputs, max_new_tokens=512, do_sample=False)
 
         decoded_outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
         for row, output, prompt in zip(batch_df.itertuples(), decoded_outputs, prompts):
             writer.writerow([
-                row.maasked_explanation.replace("\n", " ").strip(),
+                row.masked_explanation.replace("\n", " ").strip(),
                 getattr(row, "true_label", ""),  # optional
                 prompt.replace("\n", " ").strip(),
                 output.replace("\n", " ").strip()
