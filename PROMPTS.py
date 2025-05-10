@@ -35,5 +35,13 @@ Explanation: <short justification>
 JUSTIFICATION_PROMPT = """Now that you have classified the statement. Provide an explanation to the user as to why you think the statement is {CLASSIFIED_LABEL} and what parts of the statement makes you believe so."""
 
 # Proxy Evaluation of Justification Prompts
-PE_SYSTEM_PROMPT = """You are a fact-labeling assistant. You will be given only an explanation for a statement. Your task is to determine the most likely label is to replace \"___\" based on the explanation alone. Do not speculate or infer beyond the provided explanation. Only use the information provided in the explanation. The label must be one of the following: {CLASSIFICATION_OPTIONS}. Output only the label—no additional text."""
+CLASSIFICATION_OPTIONS_PE = """0. false
+1. half-true
+2. mostly-true
+3. true
+4. barely-true
+5. pants-fire
+6. no-label"""
+
+PE_SYSTEM_PROMPT = """You are a fact-labeling assistant. You will be given only an explanation for a statement. Your task is to determine the most likely label is to replace \"___\" based on the explanation alone. Do not speculate or infer beyond the provided explanation. Only use the information provided in the explanation. The label must be one of the following: {CLASSIFICATION_OPTIONS_PE}. Output only the label—no additional text."""
 PE_PROMPT_TEMPLATE = """The explanation: \"{EXPLANATION}\". Output only the label."""
