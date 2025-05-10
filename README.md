@@ -1,12 +1,19 @@
-# DistillTruth: Fake News Detection with Distilled LLMs
+# DistillTruth: Fake News Detection with Small LLMs
 
 This project evaluates the effectiveness of open-source **distilled language models** for fake news detection using the [LIAR dataset](https://huggingface.co/datasets/liar).
+
+## Paper Introduction
+The proliferation of false and misleading information (fake news) has emerged as one of the most pressing challenges of the past decade. By eroding public trust, distorting political discourse, and shaping individual and collective decision-making, misinformation poses a clear threat to the integrity of our digital society. Although advances in sequential modeling—particularly Recurrent Neural Networks (RNNs) and Long Short-Term Memory networks (LSTMs)—have demonstrated encouraging classification performance, their opaque internal representations hinder our ability to understand and justify their predictions.
+
+In recent years, Large Language Models (LLMs) have made significant strides in both accuracy and transparency when applied to fake-news detection, offering the dual benefits of high-fidelity classification and interpretable rationales. However, the substantial computational resources required to train and deploy these models limit their practical adoption, especially in resource-constrained environments. To date, little work has examined whether compression techniques—such as pruning, quantization, or knowledge distillation—can be applied to LLMs in a way that preserves their predictive power and explanatory capabilities.
+
+In this paper, we explore the trade-off between efficiency, accuracy, and interpretability in compressed LLMs for fake-news classification. Specifically, we (1) apply state-of-the-art compression methods to a pretrained LLM; (2) evaluate its classification performance against uncompressed baselines; and (3) assess its ability to generate coherent, human-readable explanations for each decision. By demonstrating that a compressed LLM can maintain strong performance while substantially reducing computational overhead—and by providing evidence of preserved interpretability—we aim to bridge the gap between model efficacy and practical deployability in the ongoing fight against misinformation.
 
 ## Project Overview
 
 - **Task**: Multi-class classification of political statements into 6 truthfulness categories.
 - **Dataset**: LIAR (13K+ labeled statements with metadata)
-- **Models**: Distilled LLMs (e.g. `deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B`)
+- **Models**: Small LLMs (e.g. `deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B`)
 - **Evaluation**: Prompt-based text generation with label extraction and metric computation
 ---
 
